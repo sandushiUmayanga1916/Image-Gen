@@ -24,7 +24,7 @@ function ImageGenerator() {
     formData.append('image', selectedFile);
 
     try {
-      const response = await axios.post('http://localhost:4000/generate-image', formData, {
+      const response = await axios.post('http://generator.enfection.com/generate-image', formData, {
         responseType: 'arraybuffer',
       });
 
