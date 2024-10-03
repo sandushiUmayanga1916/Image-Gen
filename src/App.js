@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './App.css';
-
+import './App.css';  
 function ImageGenerator() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [generatedImage, setGeneratedImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Handle file change
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
@@ -19,7 +17,6 @@ function ImageGenerator() {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -27,11 +24,9 @@ function ImageGenerator() {
     formData.append('image', selectedFile);
 
     try {
-      const response = await axios.post(
-        process.env.REACT_APP_BACKEND_URL + '/generate-image', // Use environment variable for backend URL
-        formData,
-        { responseType: 'arraybuffer' }
-      );
+      const response = await axios.post('http://generator.enfection.com/generate-image', formData, {
+        responseType: 'arraybuffer',
+      });
 
       const blob = new Blob([response.data], { type: 'image/png' });
       const url = URL.createObjectURL(blob);
@@ -53,7 +48,6 @@ function ImageGenerator() {
         </button>
       </form>
 
-      {/* Display uploaded image */}
       {uploadedImage && (
         <div className="imageContainer">
           <h2>Uploaded Image</h2>
@@ -61,7 +55,6 @@ function ImageGenerator() {
         </div>
       )}
 
-      {/* Display generated image */}
       {generatedImage && (
         <div className="imageContainer">
           <h2>Generated Image with Logo</h2>
