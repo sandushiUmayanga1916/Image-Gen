@@ -1,15 +1,14 @@
-/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { useState } from 'react';
 import axios from 'axios';
-import './App.css';  
+import './App.css';
 
 function ImageGenerator() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [generatedImage, setGeneratedImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [description, setDescription] = useState('');
 
-  // Handle file selection
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
@@ -20,10 +19,10 @@ function ImageGenerator() {
     }
   };
 
-  // Handle form submission and send file to the server
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+    setDescription('');
     const formData = new FormData();
     formData.append('image', selectedFile);
 
@@ -32,10 +31,13 @@ function ImageGenerator() {
         responseType: 'arraybuffer',
       });
 
-      // Convert the binary response to a Blob
       const blob = new Blob([response.data], { type: 'image/png' });
       const url = URL.createObjectURL(blob);
-      setGeneratedImage(url); // Set the generated image URL
+      setGeneratedImage(url);
+
+      // For demonstration purposes, we're setting a placeholder description
+      // In a real scenario, you might want to get this from the server
+      setDescription("Image generated based on the uploaded image's description.");
     } catch (error) {
       console.error('Error generating image:', error);
     } finally {
@@ -53,7 +55,6 @@ function ImageGenerator() {
         </button>
       </form>
 
-      {/* Display uploaded image */}
       {uploadedImage && (
         <div className="imageContainer">
           <h2>Uploaded Image</h2>
@@ -61,11 +62,11 @@ function ImageGenerator() {
         </div>
       )}
 
-      {/* Display generated image */}
       {generatedImage && (
         <div className="imageContainer">
-          <h2>Generated Image Based on Description</h2>
-          <img src={generatedImage} alt="Generated Image" className="image" />
+          <h2>Generated Image</h2>
+          <img src={generatedImage} alt="Generated" className="image" />
+          {description && <p className="description">{description}</p>}
         </div>
       )}
     </div>
