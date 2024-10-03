@@ -8,6 +8,7 @@ function ImageGenerator() {
   const [generatedImage, setGeneratedImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState('');
+  const [error, setError] = useState(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -23,6 +24,7 @@ function ImageGenerator() {
     event.preventDefault();
     setLoading(true);
     setDescription('');
+    setError(null);
     const formData = new FormData();
     formData.append('image', selectedFile);
 
@@ -40,6 +42,17 @@ function ImageGenerator() {
       setDescription("Image generated based on the uploaded image's description.");
     } catch (error) {
       console.error('Error generating image:', error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        setError(`Server error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
+      } else if (error.request) {
+        // The request was made but no response was received
+        setError('No response received from server. Please try again.');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        setError(`Error: ${error.message}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -67,6 +80,13 @@ function ImageGenerator() {
           <h2>Generated Image</h2>
           <img src={generatedImage} alt="Generated" className="image" />
           {description && <p className="description">{description}</p>}
+        </div>
+      )}
+
+      {error && (
+        <div className="errorContainer">
+          <h2>Error</h2>
+          <p className="error">{error}</p>
         </div>
       )}
     </div>
