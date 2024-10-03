@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';  
+
 function ImageGenerator() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [generatedImage, setGeneratedImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Handle file selection
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setSelectedFile(file);
@@ -17,6 +19,7 @@ function ImageGenerator() {
     }
   };
 
+  // Handle form submission and send file to the server
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -24,13 +27,14 @@ function ImageGenerator() {
     formData.append('image', selectedFile);
 
     try {
-      const response = await axios.post('https://gen.enfection.com/generate-image', formData, {
+      const response = await axios.post('http://localhost:4001/generate-image', formData, {
         responseType: 'arraybuffer',
-      });      
+      });
 
+      // Convert the binary response to a Blob
       const blob = new Blob([response.data], { type: 'image/png' });
       const url = URL.createObjectURL(blob);
-      setGeneratedImage(url);
+      setGeneratedImage(url); // Set the generated image URL
     } catch (error) {
       console.error('Error generating image:', error);
     } finally {
@@ -48,6 +52,7 @@ function ImageGenerator() {
         </button>
       </form>
 
+      {/* Display uploaded image */}
       {uploadedImage && (
         <div className="imageContainer">
           <h2>Uploaded Image</h2>
@@ -55,10 +60,11 @@ function ImageGenerator() {
         </div>
       )}
 
+      {/* Display generated image */}
       {generatedImage && (
         <div className="imageContainer">
-          <h2>Generated Image with Logo</h2>
-          <img src={generatedImage} alt="Generated with DALL·E 4 and Logo" className="image" />
+          <h2>Generated Image Based on Description</h2>
+          <img src={generatedImage} alt="Generated Image" className="image" />
         </div>
       )}
     </div>
